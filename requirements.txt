@@ -1,0 +1,11 @@
+requests
+pyyaml
+
+numpy
+pandas
+
+scikit-learn
+joblib
+
+matplotlib
+seaborn
