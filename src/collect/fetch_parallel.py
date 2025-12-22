@@ -6,16 +6,18 @@ from src.collect.osu_client import OsuApiClient
 from src.utils.db import init_db
 from src.utils.db_writer import queue, start_writer
 from src.utils.logger import logger
+from src.utils.config_loader import load_config
 
 TARGET_USERS = 10_000
 MAX_WORKERS = 8
-MODE = "mania"
+LIMIT = 50
+MODE = load_config()["collect"]["mode"]
 
 client = OsuApiClient()
 
 def fetch_one(uid):
     try:
-        scores = client.get_user_scores(uid, mode=MODE)
+        scores = client.get_user_scores(uid, mode=MODE, limit=LIMIT)
         if scores:
             queue.put((uid, scores))
             return True

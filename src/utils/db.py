@@ -1,7 +1,10 @@
 import sqlite3
 from pathlib import Path
 
-DB_PATH = Path(__file__).resolve().parents[2] / "data" / "osu.db"
+from datetime import datetime
+now_str = datetime.now().strftime("%Y%m%d%H%M") + ".db"
+
+DB_PATH = Path(__file__).resolve().parents[2] / "data" / now_str
 
 def get_conn():
     DB_PATH.parent.mkdir(exist_ok=True)

@@ -35,6 +35,7 @@ htmlcov/
 # 📊 Data / Output
 ########################
 data/
+models/
 output/
 results/
 *.csv

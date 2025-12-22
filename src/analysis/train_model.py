@@ -1,17 +1,22 @@
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
-from analysis.load_dataset import load_scores
-from analysis.feature_engineering import build_user_features
-from analysis.dataset_builder import add_labels
+from src.analysis.load_dataset import load_scores
+from src.analysis.feature_engineering import build_user_features
+from src.analysis.dataset_builder import add_labels
 import joblib
+from pathlib import Path
+
+from src.utils.config_loader import load_config
 
 def main():
-    df = load_scores(mode="osu")
+    config = load_config()["model"]
+    
+    df = load_scores(config["mode"])
     features = build_user_features(df)
     features = add_labels(features)
 
-    X = features.drop(columns=["user_id", "label"])
+    X = features.drop(columns=["user_id", "label", "max_pp"])
     y = features["label"]
 
     X_train, X_test, y_train, y_test = train_test_split(
@@ -30,7 +35,10 @@ def main():
 
     print("Accuracy:", acc)
 
-    joblib.dump(model, "data/osu_rf_model.pkl")
+    
+    model_path = Path(config["model_path"])
+    model_path.parent.mkdir(parents=True, exist_ok=True)
+    joblib.dump(model, config["model_path"])
 
 if __name__ == "__main__":
     main()

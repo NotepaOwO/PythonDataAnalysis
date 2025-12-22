@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
-from analysis.load_dataset import load_scores
+from src.analysis.load_dataset import load_scores
+from src.utils.config_loader import load_config
 
 def main():
-    df = load_scores()
+    df = load_scores(load_config()["model"]["mode"])
 
     plt.hist(df["pp"], bins=50)
     plt.xlabel("PP")
