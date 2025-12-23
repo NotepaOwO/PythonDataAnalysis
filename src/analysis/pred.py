@@ -12,7 +12,7 @@ from src.utils.config_loader import load_config
 LIMIT = 500
 MODE = load_config()["model"]["mode"]
 
-USR_ID = 16150392
+USR_ID = 16150392 # Enter your own UID
 # MAP_ID = 767046
 
 client = OsuApiClient()
@@ -30,10 +30,16 @@ def main():
     scores = client.get_user_scores(USR_ID, mode=MODE, limit=LIMIT)
 
     usr_array = np.zeros((1, len(map_list)))
+
+    b_p_list = []
+
     for i in scores:
         beatmap_id = i['beatmap']['id']
         if beatmap_id in map_list:
             usr_array[0, map_list.index(beatmap_id)] = i['pp']
+        b_p_list.append({'beatmap_id': beatmap_id, 'pp':i['pp']})
+    
+    b_p_df = pd.DataFrame(b_p_list).set_index('beatmap_id')['pp']
 
     # nz = np.nonzero(usr_array)
     # usr_array[nz] = np.log(usr_array[nz] + 0.5)
@@ -44,9 +50,22 @@ def main():
     pred_scores = pd.Series(np.matmul(map_m, usr_m), index=pd.Index(map_list))
     # pred_scores = pd.Series(np.exp(np.matmul(map_m, usr_m)) - 0.5, index=pd.Index(map_list))
 
-    print('\nRecommended beatmaps:')
-    print(pred_scores.nlargest(10))
+    pred_scores.sort_values(ascending=False, inplace=True)
 
+    print('\nRecommended beatmaps:')
+    print(f'{"Beatmap Id":<12}Pred PP')
+    j = 0
+    for bid, pp in pred_scores.items():
+        if j > 10:
+            break
+        elif bid not in b_p_df.index:
+            print(f'{bid:<12}{pp:.2f}')
+        elif b_p_df[bid] < pp:
+            print(f'{bid:<12}{pp:.2f}')
+        else:
+            continue
+        j += 1
+        
     plt.hist(pred_scores, bins=50)
     plt.title(f'PP Distribution for User {USR_ID}')
     plt.xlabel('PP Pred')
