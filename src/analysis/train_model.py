@@ -6,6 +6,7 @@
 # from src.analysis.dataset_builder import add_labels
 
 from sklearn.decomposition import TruncatedSVD
+from sklearn.decomposition import NMF
 
 from src.analysis.load_dataset import load_scores
 from src.analysis.feature_engineering import build_user_map_matrix
@@ -42,9 +43,9 @@ def main():
 
     # print("Accuracy:", acc)
 
-    X, _, _, _ = build_user_map_matrix(df)
-    model = TruncatedSVD(n_components=32, random_state=42)
-    model.fit_transform(X)
+    _, X, _, _, _ = build_user_map_matrix(df)
+    model = NMF(n_components=32, random_state=42, max_iter=500)
+    model.fit(X)
     
     model_path = Path(config["model_path"])
     model_path.parent.mkdir(parents=True, exist_ok=True)
