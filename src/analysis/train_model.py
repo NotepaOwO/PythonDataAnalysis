@@ -1,9 +1,14 @@
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
+# from sklearn.model_selection import train_test_split
+# from sklearn.ensemble import RandomForestClassifier
+# from sklearn.metrics import accuracy_score
+
+# from src.analysis.feature_engineering import build_user_features
+# from src.analysis.dataset_builder import add_labels
+
+from sklearn.decomposition import TruncatedSVD
+
 from src.analysis.load_dataset import load_scores
-from src.analysis.feature_engineering import build_user_features
-from src.analysis.dataset_builder import add_labels
+from src.analysis.feature_engineering import build_user_map_matrix
 import joblib
 from pathlib import Path
 
@@ -13,28 +18,33 @@ def main():
     config = load_config()["model"]
     
     df = load_scores(config["mode"])
-    features = build_user_features(df)
-    features = add_labels(features)
 
-    X = features.drop(columns=["user_id", "label", "max_pp"])
-    y = features["label"]
+    # features = build_user_features(df)
+    # features = add_labels(features)
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
-    )
+    # X = features.drop(columns=["user_id", "label", "max_pp"])
+    # y = features["label"]
 
-    model = RandomForestClassifier(
-        n_estimators=200,
-        max_depth=10,
-        random_state=42
-    )
-    model.fit(X_train, y_train)
+    # X_train, X_test, y_train, y_test = train_test_split(
+    #     X, y, test_size=0.2, random_state=42
+    # )
 
-    y_pred = model.predict(X_test)
-    acc = accuracy_score(y_test, y_pred)
+    # model = RandomForestClassifier(
+    #     n_estimators=200,
+    #     max_depth=10,
+    #     random_state=42
+    # )
+    # model.fit(X_train, y_train)
 
-    print("Accuracy:", acc)
+    
+    # y_pred = model.predict(X_test)
+    # acc = accuracy_score(y_test, y_pred)
 
+    # print("Accuracy:", acc)
+
+    X, _, _, _ = build_user_map_matrix(df)
+    model = TruncatedSVD(n_components=32, random_state=42)
+    model.fit_transform(X)
     
     model_path = Path(config["model_path"])
     model_path.parent.mkdir(parents=True, exist_ok=True)
