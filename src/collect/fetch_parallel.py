@@ -21,7 +21,7 @@ RANK_TYPE = "performance"
 RANK_PAGE_LIMIT = 50          # API 最大 50
 RANK_MAX_OFFSET = 10000       # API 实际上最多只支持到这里
 
-LIMIT = 100                   # 每个用户抓多少成绩
+LIMIT = 200                   # 每个用户抓多少成绩
 MIN_SCORES = 10
 MIN_PP = 2000
 MIN_PLAY_COUNT = 50

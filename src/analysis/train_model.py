@@ -13,7 +13,7 @@ def main():
     df = load_scores(config["mode"])
 
     _, X, _, _, _ = build_user_map_matrix(df)
-    model = NMF(n_components=128, random_state=42, max_iter=500, alpha_W=0.01, l1_ratio=0.1)
+    model = NMF(n_components=128, random_state=42, max_iter=2000, alpha_W=0.01, l1_ratio=0.1)
     model.fit(X)
     
     model_path = Path(config["model_path"])

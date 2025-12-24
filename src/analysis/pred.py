@@ -12,7 +12,7 @@ from src.utils.config_loader import load_config
 LIMIT = 500
 MODE = load_config()["model"]["mode"]
 
-USR_ID = 16150392 # Enter your own UID
+USR_ID = 36437108 # Enter your own UID
 # MAP_ID = 767046
 
 client = OsuApiClient()
@@ -65,8 +65,11 @@ def main():
         else:
             continue
         j += 1
-        
-    plt.hist(pred_scores, bins=50)
+    
+    top_n = 200
+    top_pred = pred_scores.head(top_n)
+    
+    plt.hist(top_pred, bins=50)
     plt.title(f'PP Distribution for User {USR_ID}')
     plt.xlabel('PP Pred')
     plt.ylabel('Beatmap Count')

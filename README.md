@@ -21,22 +21,25 @@
 ```text
 PythonDataAnalysis/
 ├─ config/
-│  └─ api.yaml              # API 密钥配置（不入库）
+│  └─ api.yaml                    # API 密钥配置（不入库）
 ├─ data/
-│  └─ osu.db                # SQLite 数据库（运行后生成）
+│  └─ osu.db                      # SQLite 数据库（运行后生成）
 ├─ src/
 │  ├─ collect/
-│  │  ├─ osu_client.py      # osu API 客户端（OAuth2 + 请求）
-│  │  ├─ user_sampler.py    # 随机用户 ID 采样
-│  │  └─ fetch_parallel.py  # 并发抓取入口
+│  │  ├─ osu_client.py            # osu API 客户端（OAuth2 + 请求）
+│  │  └─ fetch_parallel.py        # 并发抓取入口
 │  ├─ utils/
-│  │  ├─ config_loader.py   # 读取 api.yaml
-│  │  ├─ db.py              # 数据库连接与建表
-│  │  ├─ db_writer.py       # 单线程写入数据库   
-│  │  └─ save_scores.py     # API 数据写入数据库
+│  │  ├─ config_loader.py         # 读取 api.yaml
+│  │  ├─ db.py                    # 数据库连接与建表
+│  │  ├─ db_writer.py             # 单线程写入数据库   
+│  │  └─ logger.py                # 打印日志
 │  └─ analysis/
-│     ├─ dataset.py         # 从数据库构建 ML 数据集
-│     └─ baseline.py        # 简单 ML / 统计分析示例
+│     ├─ evaluate_model.py        # 评估模型
+│     ├─ fearture_engineering.py  # 根据数据构建矩阵
+│     ├─ load_dataset.py          # 加载数据库
+│     ├─ pred.py                  # 预测pp，给出数据和图表（可视化）
+│     ├─ train_model.py           # 训练模型
+│     └─ visualize.py             # 数据可视化
 ├─ requirements.txt
 └─ README.md
 ```
