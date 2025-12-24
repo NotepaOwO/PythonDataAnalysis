@@ -12,7 +12,7 @@ from src.utils.config_loader import load_config
 LIMIT = 500
 MODE = load_config()["model"]["mode"]
 
-USR_ID = 36437108 # Enter your own UID
+USR_ID = 15073838 # Enter your own UID
 # MAP_ID = 767046
 
 client = OsuApiClient()
@@ -37,9 +37,14 @@ def main():
         beatmap_id = i['beatmap']['id']
         if beatmap_id in map_list:
             usr_array[0, map_list.index(beatmap_id)] = i['pp']
-        b_p_list.append({'beatmap_id': beatmap_id, 'pp':i['pp']})
+        b_p_list.append({
+            'beatmap_id': beatmap_id,
+            'pp':i['pp'],
+            'title':i['beatmapset']['title_unicode'],
+            'version':i['beatmap']['version']
+        })
     
-    b_p_df = pd.DataFrame(b_p_list).set_index('beatmap_id')['pp']
+    b_p_df = pd.DataFrame(b_p_list).set_index('beatmap_id')
 
     # nz = np.nonzero(usr_array)
     # usr_array[nz] = np.log(usr_array[nz] + 0.5)
@@ -52,27 +57,31 @@ def main():
 
     pred_scores.sort_values(ascending=False, inplace=True)
 
-    print('\nRecommended beatmaps:')
-    print(f'{"Beatmap Id":<12}Pred PP')
     j = 0
+    r_list = []
     for bid, pp in pred_scores.items():
         if j > 10:
             break
         elif bid not in b_p_df.index:
-            print(f'{bid:<12}{pp:.2f}')
-        elif b_p_df[bid] < pp:
-            print(f'{bid:<12}{pp:.2f}')
+            bm = client.get_beatmap(bid)
+            r_list.append([bm['beatmapset']['title'] + '-' + bm['version'], pp])
+        elif b_p_df['pp'][bid] < pp:
+            r_list.append([b_p_df['title'][bid] + '-' + b_p_df['version'][bid], pp])
         else:
             continue
         j += 1
     
-    top_n = 200
-    top_pred = pred_scores.head(top_n)
-    
-    plt.hist(top_pred, bins=50)
+    longest = max(list(map(lambda x: len(x[0]), r_list)))
+    print(f'\nRecommended beatmaps for user {USR_ID}:')
+    print(f'{"Beatmap":<{longest+2}}Pred PP')
+    for t, p in r_list:
+        print(f'{t:<{longest+2}}{p:.2f}')
+        
+    plt.hist(pred_scores, bins=50)
     plt.title(f'PP Distribution for User {USR_ID}')
     plt.xlabel('PP Pred')
     plt.ylabel('Beatmap Count')
+    plt.yscale('log')
     plt.show()
 
 if __name__=='__main__':
