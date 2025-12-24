@@ -60,3 +60,14 @@ class OsuApiClient:
         resp = self.session.get(url, headers={"Authorization": f"Bearer {self.token}"}, params=params, timeout=10)
         resp.raise_for_status()
         return resp.json().get("ranking", [])
+    
+    def get_beatmap(self, beatmap_id):
+        self._ensure_token()
+        url = f"{self.config['api_base']}/beatmaps/{beatmap_id}"
+        resp = requests.get(
+            url,
+            headers={"Authorization": f"Bearer {self.token}"},
+            timeout=10
+        )
+        resp.raise_for_status()
+        return resp.json()
