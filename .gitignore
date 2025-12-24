@@ -38,6 +38,7 @@ data/
 models/
 output/
 results/
+logs/
 *.csv
 *.json
 *.parquet
