@@ -1,0 +1,11 @@
+osu:
+  client_id: your id
+  client_secret: "your client_secret token"
+  redirect_uri: "http://localhost:8080"
+  token_url: "https://osu.ppy.sh/oauth/token"
+  api_base: "https://osu.ppy.sh/api/v2"
+
+model:
+  mode: "mania"
+  data_path: "data/osu.db"
+  model_path: "models/mania_rf_model.pkl"
